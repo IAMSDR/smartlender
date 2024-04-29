@@ -16,4 +16,4 @@ https://smartlender.iamsdr.online/
 
 - [@iamsdr](https://www.github.com/iamsdr) ( Lead )
 - [@Dileep](https://www.github.com/dileep990)
-- [@john](https://www.github.com/)
+- [@john](https://www.github.com/Johnweslychebrolu)
