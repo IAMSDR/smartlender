@@ -1,0 +1,385 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/output.css" />
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.0.0/dist/iconify-icon.min.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.13.8/dist/cdn.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.8/dist/cdn.min.js"
+    ></script>
+    <title>Smart Lender</title>
+  </head>
+  <body
+    x-data="{
+      form: false,
+      loading: true,
+      response: null,
+      modal: false,
+      formData: {
+        graduate: 0,
+        selfEmployed: 0,
+        income: null,
+        dependents: null,
+        loan: null,
+        term: null,
+        cibil: null,
+        rassets: null,
+        cassets: null,
+        lassets: null,
+        bassets: null,
+      },
+      submitForm(){
+        window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: 'smooth' })
+        this.loading = true;
+        this.modal = true;
+        fetch('/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.formData),
+       })
+       .then(async (res) => {
+         var data = await res.json();
+         this.response = data.result;
+         this.loading = false;
+        })
+        .catch((error) => {
+          this.response = -1
+          console.log(error)
+          this.loading = false;
+        })
+      }
+  }"
+    class="relative"
+  >
+    <div id="page1" class="flex-center flex-col h-dvh w-dvw overflow-hidden">
+      <div class="h-32 w-32 sm:h-40 sm:w-40 lg:h-52 lg:w-52">
+        <img src="/static/loan-illustrator.svg" alt="" />
+      </div>
+      <div
+        class="flex-center mt-6 flex-col text-center font-semibold text-xl xs:text-3xl md:text-4xl xl:text-5xl"
+      >
+        <span
+          ><span
+            class="text-lime-400 text-2xl xs:text-4xl md:text-5xl xl:text-6xl mr-1"
+            >Smart Lender.</span
+          >Your</span
+        >
+        <span>Loan Approval Predictor</span>
+        <span class="text-xs xs:text-sm text-slate-400 mt-1.5 font-medium"
+          >Empowerd by
+          <iconify-icon
+            icon="carbon:machine-learning-model"
+            class="align-middle"
+          ></iconify-icon>
+          Machine Learning</span
+        >
+      </div>
+      <div class="flex-center w-full mt-10">
+        <button
+          @click="
+          form = true;
+          await $nextTick();
+          window.scroll({ top: window.innerHeight, behavior: 'smooth'})
+          "
+          class="bg-lime-500 flex-center space-x-1 text-sm md:text-base font-sans active:bg-lime-400 hover:bg-lime-400 active:translate-y-0.5 hover:scale-105 transition-transform duration-300 text-black font-bold px-3 sm:px-5 p-1.5 sm:p-2 rounded-lg"
+        >
+          <span>Let's Go</span>
+          <div class="rotate-90">
+            <iconify-icon
+              icon="mingcute:arrow-up-fill"
+              class="animate-bounce"
+            ></iconify-icon>
+          </div>
+        </button>
+      </div>
+    </div>
+    <template x-if="form">
+      <div class="min-h-dvh w-dvw flex-col flex items-center relative">
+        <span class="mt-8 text-3xl font-medium">Fill the details below</span>
+        <form
+          @submit.prevent="submitForm"
+          class="px-4 mt-10 mb-10 w-full max-w-md font-sans"
+        >
+          <div class="flex justify-center space-x-5 font-medium">
+            <button
+              type="button"
+              @click="formData.graduate = 0"
+              class="flex-center space-x-2 border-2 border-gray-500 rounded-md p-1.5 px-4"
+              :class="formData.graduate==0 && `border-lime-500 text-lime-400`"
+            >
+              <iconify-icon
+                icon="charm:graduate-cap"
+                width="1.2rem"
+                height="1.2rem"
+              ></iconify-icon>
+              <span>Graduate</span>
+            </button>
+            <button
+              type="button"
+              @click="formData.graduate = 1"
+              class="flex-center space-x-2 border-2 border-gray-500 rounded-md p-1.5 px-4"
+              :class="formData.graduate==1 && `border-lime-500 text-lime-400`"
+            >
+              <iconify-icon
+                icon="tabler:school-off"
+                width="1.2rem"
+                height="1.2rem"
+              ></iconify-icon>
+              <span>Not Graduate</span>
+            </button>
+          </div>
+          <div class="flex justify-start items-center space-x-4 mt-4 p-2">
+            <label for="selfEmployed" class="font-medium text-sm ml-1"
+              >Self employed ?
+            </label>
+            <input
+              type="checkbox"
+              @input="formData.selfEmployed = $el.checked ? 1 : 0"
+              class="accent-lime-400 h-4 w-4"
+            />
+          </div>
+          <div class="flex justify-start flex-col p-2 relative">
+            <label for="income" class="mb-2 font-medium text-sm ml-1"
+              >Annual income :</label
+            >
+            <iconify-icon
+              icon="mdi:rupee"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              x-model="formData.income"
+              type="number"
+              name="income"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex justify-start flex-col mt-1.5 p-2 relative">
+            <label for="dependents" class="mb-2 font-medium text-sm ml-1"
+              >No of dependents :</label
+            >
+            <iconify-icon
+              icon="fluent:people-20-filled"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              max="20"
+              x-model="formData.dependents"
+              type="number"
+              name="dependents"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex justify-start flex-col mt-1.5 p-2 relative">
+            <label for="loan" class="mb-2 font-medium text-sm ml-1"
+              >Loan amount ( ₹ ) :</label
+            >
+            <iconify-icon
+              icon="healthicons:money-bag"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              x-model="formData.loan"
+              type="number"
+              name="loan"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex justify-start flex-col mt-1.5 p-2 relative">
+            <label for="term" class="mb-2 font-medium text-sm ml-1"
+              >Loan term ( in years ) :</label
+            >
+            <iconify-icon
+              icon="solar:calendar-date-bold"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              max="30"
+              x-model="formData.term"
+              type="number"
+              name="term"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex justify-start flex-col mt-1.5 p-2 relative">
+            <label for="cibil" class="mb-2 font-medium text-sm ml-1"
+              >Cibil score :</label
+            >
+            <iconify-icon
+              icon="line-md:speedometer-loop"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              min="300"
+              max="900"
+              x-model="formData.cibil"
+              type="number"
+              name="cibil"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex justify-start flex-col mt-1.5 p-2 relative">
+            <label for="rassets" class="mb-2 font-medium text-sm ml-1"
+              >Residential assets value ( ₹ ):</label
+            >
+            <iconify-icon
+              icon="maki:residential-community"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              x-model="formData.rassets"
+              type="number"
+              name="rassets"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex justify-start flex-col mt-1.5 p-2 relative">
+            <label for="cassets" class="mb-2 font-medium text-sm ml-1"
+              >Commercial assets value ( ₹ ):</label
+            >
+            <iconify-icon
+              icon="solar:shop-bold"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              x-model="formData.cassets"
+              type="number"
+              name="cassets"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex justify-start flex-col mt-1.5 p-2 relative">
+            <label for="lassets" class="mb-2 font-medium text-sm ml-1"
+              >Luxury assets value ( ₹ ):</label
+            >
+            <iconify-icon
+              icon="mingcute:car-3-fill"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              x-model="formData.lassets"
+              type="number"
+              name="lassets"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex justify-start flex-col mt-1.5 p-2 relative">
+            <label for="bassets" class="mb-2 font-medium text-sm ml-1"
+              >Bank assets value ( ₹ ):</label
+            >
+            <iconify-icon
+              icon="fluent:building-bank-24-filled"
+              width="1rem"
+              height="1rem"
+              class="absolute bottom-5 left-5"
+            ></iconify-icon>
+            <input
+              required
+              x-model="formData.bassets"
+              type="number"
+              name="bassets"
+              class="bg-transparent border-2 outline-none border-gray-600 pl-10 p-1.5 rounded-md focus:border-lime-500"
+            />
+          </div>
+          <div class="flex-center w-full mt-6">
+            <button
+              type="submit"
+              class="bg-lime-500 flex-center space-x-1 text-sm md:text-base font-sans active:bg-lime-400 hover:bg-lime-400 active:translate-y-0.5 hover:scale-105 transition-transform duration-300 text-black font-bold px-3 sm:px-5 p-1.5 sm:p-2 rounded-lg"
+            >
+              <iconify-icon icon="fluent:predictions-24-filled"></iconify-icon>
+              <span>Predict</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </template>
+    <div
+      x-show="modal"
+      x-cloak
+      class="absolute bottom-0 h-dvh w-dvw overflow-hidden z-20 bg-black/70 backdrop-blur-sm flex-center p-2 px-5"
+    >
+      <div
+        x-trap.noscroll="modal"
+        @click.outside="modal = false"
+        class="bg-gray-900 relative border-2 flex-center border-gray-700 shadow-inner min-h-80 w-full max-w-md xl:max-w-lg rounded-lg"
+      >
+        <div x-show="loading" class="flex-center flex-col space-y-10">
+          <iconify-icon
+            icon="carbon:machine-learning-model"
+            class="animate-pulse text-gray-400"
+            width="4rem"
+            height="4rem"
+          ></iconify-icon>
+          <span class="text-slate-400 font-sans font-semibold text-base"
+            >Predicting ...</span
+          >
+        </div>
+        <div x-show="!loading" class="flex-center">
+          <div
+            x-show="response == 1"
+            class="flex-center flex-col space-y-6 md:space-y-8"
+          >
+            <img src="/static/approve.svg" alt="img" class="h-24 w-24" />
+            <span class="text-lg font-semibold"
+              >Your Loan will be Approved</span
+            >
+          </div>
+          <div
+            x-show="response == 0"
+            class="flex-center flex-col space-y-6 md:space-y-8"
+          >
+            <img src="/static/reject.svg" alt="img" class="h-24 w-24" />
+            <span class="text-lg font-semibold"
+              >Your Loan will be Rejected</span
+            >
+          </div>
+          <div x-show="response == -1" class="flex-center">
+            <span> Unkown error </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          @click="modal = false"
+          class="absolute right-2 top-2 outline-none"
+        >
+          <iconify-icon
+            icon="iconamoon:close-bold"
+            width="1.5rem"
+            height="1.5rem"
+            class="text-gray-400"
+          ></iconify-icon>
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
